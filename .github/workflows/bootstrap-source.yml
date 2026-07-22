@@ -1,4 +1,4 @@
-name: Bootstrap source tree
+name: Bootstrap Rev11 source tree
 
 on:
   push:
@@ -19,9 +19,8 @@ jobs:
       - name: Expand verified Rev11 project source
         shell: bash
         run: |
-          base64 --decode bootstrap/rev11-src.b64 > /tmp/rev11-src.tar.gz
-          echo "6d8d03e0f9b0c60a9daedc0f23f74bc5230be588895be306fa9a9d29cafb6308  /tmp/rev11-src.tar.gz" | sha256sum --check
-          tar -xzf /tmp/rev11-src.tar.gz
+          echo "e8936106574680450f5f78a9dfae9b3f6a6fe25e91513744b39a4aa66533f45e  bootstrap/rev11-src.tar.gz" | sha256sum --check
+          tar -xzf bootstrap/rev11-src.tar.gz
 
       - name: Restore STM32CubeL4 v1.18.2 drivers
         shell: bash
