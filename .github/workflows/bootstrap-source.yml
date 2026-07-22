@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Check readiness
         id: ready
         shell: bash
@@ -24,13 +25,30 @@ jobs:
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Expand source archive
+
+      - name: Expand Rev11 project source
         if: steps.ready.outputs.ready == 'true'
         shell: bash
         run: |
           cat bootstrap/source.part* | base64 --decode > /tmp/source.tar.gz
           tar -xzf /tmp/source.tar.gz
+
+      - name: Restore STM32CubeL4 v1.18.2 drivers
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
+          git clone --recursive --depth 1 --branch v1.18.2 \
+            https://github.com/STMicroelectronics/STM32CubeL4.git /tmp/STM32CubeL4
+          mkdir -p CubeMXHAL CubeMXLL
+          cp -a /tmp/STM32CubeL4/Drivers CubeMXHAL/Drivers
+          cp -a /tmp/STM32CubeL4/Drivers CubeMXLL/Drivers
+
+      - name: Remove bootstrap files
+        if: steps.ready.outputs.ready == 'true'
+        shell: bash
+        run: |
           rm -rf bootstrap .github/workflows/bootstrap-source.yml
+
       - name: Commit source tree
         if: steps.ready.outputs.ready == 'true'
         shell: bash
