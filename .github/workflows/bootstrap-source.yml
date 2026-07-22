@@ -19,10 +19,10 @@ jobs:
       - name: Reassemble and verify Rev11 project source
         shell: bash
         run: |
-          cat bootstrap/rev11-part*.b64 | base64 --decode > bootstrap/rev11-src.tar.gz
-          echo "95ca0a9dc77cce3d3fbfd62086e73a95d16c6a0f4582ca8253d2e9d05fc6f3e2  bootstrap/rev11-src.tar.gz" | sha256sum --check
-          gzip -t bootstrap/rev11-src.tar.gz
-          tar -xzf bootstrap/rev11-src.tar.gz
+          cat bootstrap/rev11-xz-part*.b64 | base64 --decode > bootstrap/rev11-src.tar.xz
+          echo "75670f204ce8d7d79fac7f9cc3ec8e6538111aea3076f44a970470434be75d23  bootstrap/rev11-src.tar.xz" | sha256sum --check
+          xz -t bootstrap/rev11-src.tar.xz
+          tar -xJf bootstrap/rev11-src.tar.xz
           echo "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  LICENSE" | sha256sum --check
           echo "c94f88f5f50ca9582942584e0b15322b50edd31c2dae73b5fdca1f9580e18cc2  NOTICE" | sha256sum --check
           echo "2d8dad2737325531d8866b2724870b242d7a90b65b4ae5fb9c01063b08aad7c1  LICENSE_SCOPE.md" | sha256sum --check
