@@ -3,7 +3,7 @@ name: Bootstrap source tree
 on:
   push:
     paths:
-      - 'bootstrap/**'
+      - 'bootstrap/READY'
 
 permissions:
   contents: write
@@ -16,25 +16,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check readiness
-        id: ready
+      - name: Expand verified Rev11 project source
         shell: bash
         run: |
-          if [[ -f bootstrap/READY ]]; then
-            echo "ready=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Expand Rev11 project source
-        if: steps.ready.outputs.ready == 'true'
-        shell: bash
-        run: |
-          cat bootstrap/source.part* | base64 --decode > /tmp/source.tar.gz
-          tar -xzf /tmp/source.tar.gz
+          base64 --decode bootstrap/rev11-src.b64 > /tmp/rev11-src.tar.gz
+          echo "6d8d03e0f9b0c60a9daedc0f23f74bc5230be588895be306fa9a9d29cafb6308  /tmp/rev11-src.tar.gz" | sha256sum --check
+          tar -xzf /tmp/rev11-src.tar.gz
 
       - name: Restore STM32CubeL4 v1.18.2 drivers
-        if: steps.ready.outputs.ready == 'true'
         shell: bash
         run: |
           git clone --recursive --depth 1 --branch v1.18.2 \
@@ -44,13 +33,11 @@ jobs:
           cp -a /tmp/STM32CubeL4/Drivers CubeMXLL/Drivers
 
       - name: Remove bootstrap files
-        if: steps.ready.outputs.ready == 'true'
         shell: bash
         run: |
           rm -rf bootstrap .github/workflows/bootstrap-source.yml
 
       - name: Commit source tree
-        if: steps.ready.outputs.ready == 'true'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
