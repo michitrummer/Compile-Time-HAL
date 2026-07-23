@@ -1,1 +1,0 @@
-Rev11 transport is being rebuilt using small binary Git blobs; previous archive files are superseded.
