@@ -121,13 +121,13 @@ struct PortConfiguration
     typedef detail::CombinedConfiguration<typename Traits::Configuration...> Values;
 
     if (Values::modeMask != 0u)
-      Port<id>::modeReg() = (Port<id>::modeReg() & ~Values::modeMask) | Values::modeValue;
+      HwReg<uint32_t>::writeMasked(Port<id>::modeReg(), Values::modeMask, Values::modeValue);
     if (Values::typeMask != 0u)
-      Port<id>::typeReg() = (Port<id>::typeReg() & ~Values::typeMask) | Values::typeValue;
+      HwReg<uint32_t>::writeMasked(Port<id>::typeReg(), Values::typeMask, Values::typeValue);
     if (Values::speedMask != 0u)
-      Port<id>::speedReg() = (Port<id>::speedReg() & ~Values::speedMask) | Values::speedValue;
+      HwReg<uint32_t>::writeMasked(Port<id>::speedReg(), Values::speedMask, Values::speedValue);
     if (Values::pullMask != 0u)
-      Port<id>::pullReg() = (Port<id>::pullReg() & ~Values::pullMask) | Values::pullValue;
+      HwReg<uint32_t>::writeMasked(Port<id>::pullReg(), Values::pullMask, Values::pullValue);
   }
 };
 

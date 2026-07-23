@@ -18,6 +18,7 @@
 #include <utility>
 
 #include "./bits.h"
+#include "./HwReg.h"
 #include "./periMemMap.h"
 
 namespace csl
@@ -51,7 +52,7 @@ class RCC
     static void enableMask(std::uint32_t mask)
     {
       auto& regs = registers();
-      regs.ahb2enr |= mask;
+      HwReg<std::uint32_t>::setBits(regs.ahb2enr, mask);
       (void)regs.ahb2enr;
     }
 

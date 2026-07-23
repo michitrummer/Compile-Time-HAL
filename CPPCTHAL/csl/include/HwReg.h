@@ -46,6 +46,11 @@ class HwReg
       reg = value;
     }
 
+    static void writeMasked(volatile RegType& reg, RegType mask, RegType value)
+    {
+      reg = static_cast<RegType>((reg & static_cast<RegType>(~mask)) | value);
+    }
+
     template<unsigned int bitWidth, unsigned int shift>
     static void setSubValue(volatile RegType& reg, RegType value)
     {
