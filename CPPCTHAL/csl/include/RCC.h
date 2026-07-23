@@ -62,7 +62,7 @@ class RCC
     static void enableMask(uint32_t mask)
     {
       Regs& regs = registers();
-      regs.ahb2enr |= mask;
+      HwReg<uint32_t>::setBits(regs.ahb2enr, mask);
       (void)regs.ahb2enr;
     }
 
