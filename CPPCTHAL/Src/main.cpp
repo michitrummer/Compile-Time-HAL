@@ -13,16 +13,15 @@
 #include <bsl/include/Led.h>
 #include <bsl/include/Switch.h>
 
-int main(void)
-{
+int main(void) {
   bsl::BoardConfig::apply();
   bsl::Led<bsl::LedId::ld4> led0;
   bsl::Switch<bsl::SwitchId::b1> sw0;
 
-
-  while (1)
-  {
-    if (sw0.pressed()) led0.on();
-    else led0.off();
+  while (1) {
+    if (sw0.pressed())
+      led0.on();
+    else
+      led0.off();
   }
 }

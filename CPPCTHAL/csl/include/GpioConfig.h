@@ -17,8 +17,7 @@
 #include "./Pin.h"
 #include "./RCC.h"
 
-namespace csl
-{
+namespace csl {
 
 /**
  * @brief Compile-time configuration of one GPIO pin.
@@ -29,11 +28,10 @@ namespace csl
  *
  * All masks and values are constants and require no runtime storage.
  */
-template<pin::Id id, pin::Mode mode, pin::Pull pull, pin::Speed speed = pin::freqLow>
-struct PinConfiguration
-{
-  enum : uint32_t
-  {
+template <pin::Id id, pin::Mode mode, pin::Pull pull,
+          pin::Speed speed = pin::freqLow>
+struct PinConfiguration {
+  enum : uint32_t {
     pinBit = 1u << id,
     shift = static_cast<uint32_t>(id) * 2u,
     modeMask = 3u << shift,
@@ -48,47 +46,45 @@ struct PinConfiguration
   };
 };
 
-namespace detail
-{
+namespace detail {
 
-template<bool... Values>
+template <bool... Values>
 struct AllTrue;
 
-template<>
-struct AllTrue<>
-{
+template <>
+struct AllTrue<> {
   enum : bool { value = true };
 };
 
-template<bool Head, bool... Tail>
-struct AllTrue<Head, Tail...>
-{
+template <bool Head, bool... Tail>
+struct AllTrue<Head, Tail...> {
   enum : bool { value = Head && AllTrue<Tail...>::value };
 };
 
-template<typename... Configs>
+template <typename... Configs>
 struct CombinedConfiguration;
 
-template<>
-struct CombinedConfiguration<>
-{
-  enum : uint32_t
-  {
-    modeMask = 0u, modeValue = 0u,
-    typeMask = 0u, typeValue = 0u,
-    speedMask = 0u, speedValue = 0u,
-    pullMask = 0u, pullValue = 0u
+template <>
+struct CombinedConfiguration<> {
+  enum : uint32_t {
+    modeMask = 0u,
+    modeValue = 0u,
+    typeMask = 0u,
+    typeValue = 0u,
+    speedMask = 0u,
+    speedValue = 0u,
+    pullMask = 0u,
+    pullValue = 0u
   };
 };
 
-template<typename Head, typename... Tail>
-struct CombinedConfiguration<Head, Tail...>
-{
+template <typename Head, typename... Tail>
+struct CombinedConfiguration<Head, Tail...> {
   typedef CombinedConfiguration<Tail...> Rest;
-  static_assert((Head::modeMask & Rest::modeMask) == 0u,
-                "A GPIO pin is configured more than once in one port configuration");
-  enum : uint32_t
-  {
+  static_assert(
+      (Head::modeMask & Rest::modeMask) == 0u,
+      "A GPIO pin is configured more than once in one port configuration");
+  enum : uint32_t {
     modeMask = Head::modeMask | Rest::modeMask,
     modeValue = Head::modeValue | Rest::modeValue,
     typeMask = Head::typeMask | Rest::typeMask,
@@ -100,34 +96,38 @@ struct CombinedConfiguration<Head, Tail...>
   };
 };
 
-} // namespace detail
+}  // namespace detail
 
 /**
- * @brief Combines pin configurations and applies at most one update per register.
+ * @brief Combines pin configurations and applies at most one update per
+ * register.
  * @tparam id GPIO port selected at compile time.
  * @tparam Traits GpioTraits types belonging to that port.
  *
  * CombinedConfiguration recursively folds masks and values at compile time and
  * rejects duplicate pins with a static assertion.
  */
-template<port::Id id, typename... Traits>
-struct PortConfiguration
-{
-  static void apply()
-  {
+template <port::Id id, typename... Traits>
+struct PortConfiguration {
+  static void apply() {
     static_assert(detail::AllTrue<(Traits::portId == id)...>::value,
                   "PortConfiguration id must match every Traits::portId");
 
-    typedef detail::CombinedConfiguration<typename Traits::Configuration...> Values;
+    typedef detail::CombinedConfiguration<typename Traits::Configuration...>
+        Values;
 
     if (Values::modeMask != 0u)
-      HwReg<uint32_t>::writeMasked(Port<id>::modeReg(), Values::modeMask, Values::modeValue);
+      HwReg<uint32_t>::writeMasked(Port<id>::modeReg(), Values::modeMask,
+                                   Values::modeValue);
     if (Values::typeMask != 0u)
-      HwReg<uint32_t>::writeMasked(Port<id>::typeReg(), Values::typeMask, Values::typeValue);
+      HwReg<uint32_t>::writeMasked(Port<id>::typeReg(), Values::typeMask,
+                                   Values::typeValue);
     if (Values::speedMask != 0u)
-      HwReg<uint32_t>::writeMasked(Port<id>::speedReg(), Values::speedMask, Values::speedValue);
+      HwReg<uint32_t>::writeMasked(Port<id>::speedReg(), Values::speedMask,
+                                   Values::speedValue);
     if (Values::pullMask != 0u)
-      HwReg<uint32_t>::writeMasked(Port<id>::pullReg(), Values::pullMask, Values::pullValue);
+      HwReg<uint32_t>::writeMasked(Port<id>::pullReg(), Values::pullMask,
+                                   Values::pullValue);
   }
 };
 
@@ -135,13 +135,9 @@ struct PortConfiguration
  * @brief Enables an OR-combined GPIO clock mask in one RCC update.
  * @tparam clockMask Compile-time RCC AHB2 enable mask.
  */
-template<uint32_t clockMask>
-struct GpioClockConfiguration
-{
-  static void apply()
-  {
-    RCC<>::enableMask(clockMask);
-  }
+template <uint32_t clockMask>
+struct GpioClockConfiguration {
+  static void apply() { RCC<>::enableMask(clockMask); }
 };
 
 /**
@@ -153,20 +149,15 @@ struct GpioClockConfiguration
  * @tparam speed Pin output speed (ignored for inputs).
  * @tparam clockMask RCC mask that enables the corresponding GPIO port clock.
  */
-template<csl::pin::Id pinId,
-         csl::port::Id port,
-         csl::pin::Mode mode,
-         csl::pin::Pull pull,
-         csl::pin::Speed speed,
-         uint32_t clockBits>
-struct GpioTraits
-{
+template <csl::pin::Id pinId, csl::port::Id port, csl::pin::Mode mode,
+          csl::pin::Pull pull, csl::pin::Speed speed, uint32_t clockBits>
+struct GpioTraits {
   typedef csl::Pin<pinId, port> Pin;
   typedef csl::PinConfiguration<pinId, mode, pull, speed> Configuration;
   static constexpr csl::port::Id portId = port;
   static constexpr uint32_t clockMask = clockBits;
 };
 
-} // namespace csl
+}  // namespace csl
 
 #endif /* CSL_GPIO_CONFIG_H_ */

@@ -14,53 +14,41 @@
 
 #include <cstdint>
 
-namespace csl
-{
+namespace csl {
 
 /**
  * @brief Stateless helper for accesses to memory-mapped hardware registers.
  *
  * @tparam RegType unsigned register type matching the register width
  */
-template<typename RegType>
-class HwReg
-{
-  public:
-    static void setBits(volatile RegType& reg, RegType bits)
-    {
-      reg |= bits;
-    }
+template <typename RegType>
+class HwReg {
+ public:
+  static void setBits(volatile RegType& reg, RegType bits) { reg |= bits; }
 
-    static void clearBits(volatile RegType& reg, RegType bits)
-    {
-      reg &= static_cast<RegType>(~bits);
-    }
+  static void clearBits(volatile RegType& reg, RegType bits) {
+    reg &= static_cast<RegType>(~bits);
+  }
 
-    static bool areBitsSet(const volatile RegType& reg, RegType bits)
-    {
-      return (reg & bits) == bits;
-    }
+  static bool areBitsSet(const volatile RegType& reg, RegType bits) {
+    return (reg & bits) == bits;
+  }
 
-    static void setValue(volatile RegType& reg, RegType value)
-    {
-      reg = value;
-    }
+  static void setValue(volatile RegType& reg, RegType value) { reg = value; }
 
-    static void writeMasked(volatile RegType& reg, RegType mask, RegType value)
-    {
-      reg = static_cast<RegType>((reg & static_cast<RegType>(~mask)) | value);
-    }
+  static void writeMasked(volatile RegType& reg, RegType mask, RegType value) {
+    reg = static_cast<RegType>((reg & static_cast<RegType>(~mask)) | value);
+  }
 
-    template<unsigned int bitWidth, unsigned int shift>
-    static void setSubValue(volatile RegType& reg, RegType value)
-    {
-      const RegType mask =
-          static_cast<RegType>(((static_cast<RegType>(1u) << bitWidth) - 1u) << shift);
-      clearBits(reg, mask);
-      setBits(reg, static_cast<RegType>(value << shift));
-    }
+  template <unsigned int bitWidth, unsigned int shift>
+  static void setSubValue(volatile RegType& reg, RegType value) {
+    const RegType mask = static_cast<RegType>(
+        ((static_cast<RegType>(1u) << bitWidth) - 1u) << shift);
+    clearBits(reg, mask);
+    setBits(reg, static_cast<RegType>(value << shift));
+  }
 };
 
-} // namespace csl
+}  // namespace csl
 
 #endif /* CSL_HWREG_H_ */
