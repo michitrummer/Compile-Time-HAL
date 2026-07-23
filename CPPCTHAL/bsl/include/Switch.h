@@ -12,9 +12,7 @@
 #ifndef BSL_SWITCH_H_
 #define BSL_SWITCH_H_
 
-#include <cstdint>
 #include <csl/include/GpioConfig.h>
-#include <csl/include/Pin.h>
 
 namespace bsl
 {
@@ -33,25 +31,50 @@ enum class SwitchId
 template<SwitchId id>
 struct SwitchTraits;
 
-#define BSL_SWITCH_TRAITS(ID, PIN, PORT, PULL, CLOCK) \
-template<> struct SwitchTraits<SwitchId::ID> { \
-  typedef csl::Pin<csl::pin::PIN, csl::port::PORT> Pin; \
-  typedef csl::PinConfiguration<csl::pin::PIN, csl::pin::inp, csl::pin::PULL, csl::pin::freqLow> Configuration; \
-  static constexpr csl::port::Id portId = csl::port::PORT; \
-  static constexpr uint32_t clockMask = csl::RCC<>::CLOCK; \
-};
+template<>
+struct SwitchTraits<SwitchId::b1>
+  : csl::GpioTraits<csl::pin::pin13, csl::port::c, csl::pin::inp, csl::pin::noPull, csl::pin::freqLow, csl::RCC<>::ahb2GpioCEn>
+{};
 
-BSL_SWITCH_TRAITS(b1,  pin13, c, noPull,   ahb2GpioCEn)
-BSL_SWITCH_TRAITS(ex1, pin0,  a, pullUp,   ahb2GpioAEn)
-BSL_SWITCH_TRAITS(ex2, pin1,  a, pullDown, ahb2GpioAEn)
-BSL_SWITCH_TRAITS(ex3, pin2,  a, noPull,   ahb2GpioAEn)
-BSL_SWITCH_TRAITS(ex4, pin3,  a, pullUp,   ahb2GpioAEn)
-BSL_SWITCH_TRAITS(ex5, pin4,  c, pullDown, ahb2GpioCEn)
-BSL_SWITCH_TRAITS(ex6, pin5,  c, noPull,   ahb2GpioCEn)
-BSL_SWITCH_TRAITS(ex7, pin6,  d, pullUp,   ahb2GpioDEn)
-BSL_SWITCH_TRAITS(ex8, pin7,  e, pullDown, ahb2GpioEEn)
+template<>
+struct SwitchTraits<SwitchId::ex1>
+  : csl::GpioTraits<csl::pin::pin0, csl::port::a, csl::pin::inp, csl::pin::pullUp, csl::pin::freqLow, csl::RCC<>::ahb2GpioAEn>
+{};
 
-#undef BSL_SWITCH_TRAITS
+template<>
+struct SwitchTraits<SwitchId::ex2>
+  : csl::GpioTraits<csl::pin::pin1, csl::port::a, csl::pin::inp, csl::pin::pullDown, csl::pin::freqLow, csl::RCC<>::ahb2GpioAEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex3>
+  : csl::GpioTraits<csl::pin::pin2, csl::port::a, csl::pin::inp, csl::pin::noPull, csl::pin::freqLow, csl::RCC<>::ahb2GpioAEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex4>
+  : csl::GpioTraits<csl::pin::pin3, csl::port::a, csl::pin::inp, csl::pin::pullUp, csl::pin::freqLow, csl::RCC<>::ahb2GpioAEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex5>
+  : csl::GpioTraits<csl::pin::pin4, csl::port::c, csl::pin::inp, csl::pin::pullDown, csl::pin::freqLow, csl::RCC<>::ahb2GpioCEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex6>
+  : csl::GpioTraits<csl::pin::pin5, csl::port::c, csl::pin::inp, csl::pin::noPull, csl::pin::freqLow, csl::RCC<>::ahb2GpioCEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex7>
+  : csl::GpioTraits<csl::pin::pin6, csl::port::d, csl::pin::inp, csl::pin::pullUp, csl::pin::freqLow, csl::RCC<>::ahb2GpioDEn>
+{};
+
+template<>
+struct SwitchTraits<SwitchId::ex8>
+  : csl::GpioTraits<csl::pin::pin7, csl::port::e, csl::pin::inp, csl::pin::pullDown, csl::pin::freqLow, csl::RCC<>::ahb2GpioEEn>
+{};
 
 /**
  * @brief Zero-overhead board-support switch abstraction.

@@ -51,6 +51,21 @@ struct PinConfiguration
 namespace detail
 {
 
+template<bool... Values>
+struct AllTrue;
+
+template<>
+struct AllTrue<>
+{
+  enum : bool { value = true };
+};
+
+template<bool Head, bool... Tail>
+struct AllTrue<Head, Tail...>
+{
+  enum : bool { value = Head && AllTrue<Tail...>::value };
+};
+
 template<typename... Configs>
 struct CombinedConfiguration;
 
@@ -90,17 +105,20 @@ struct CombinedConfiguration<Head, Tail...>
 /**
  * @brief Combines pin configurations and applies at most one update per register.
  * @tparam id GPIO port selected at compile time.
- * @tparam Configs PinConfiguration types belonging to that port.
+ * @tparam Traits GpioTraits types belonging to that port.
  *
  * CombinedConfiguration recursively folds masks and values at compile time and
  * rejects duplicate pins with a static assertion.
  */
-template<port::Id id, typename... Configs>
+template<port::Id id, typename... Traits>
 struct PortConfiguration
 {
   static void apply()
   {
-    typedef detail::CombinedConfiguration<Configs...> Values;
+    static_assert(detail::AllTrue<(Traits::portId == id)...>::value,
+                  "PortConfiguration id must match every Traits::portId");
+
+    typedef detail::CombinedConfiguration<typename Traits::Configuration...> Values;
 
     if (Values::modeMask != 0u)
       Port<id>::modeReg() = (Port<id>::modeReg() & ~Values::modeMask) | Values::modeValue;
@@ -124,6 +142,29 @@ struct GpioClockConfiguration
   {
     RCC<>::enableMask(clockMask);
   }
+};
+
+/**
+ * @brief Shared compile-time GPIO mapping.
+ * @tparam pinId Physical GPIO pin number.
+ * @tparam portId Physical GPIO port.
+ * @tparam mode Pin operating mode.
+ * @tparam pull Pin pull resistor configuration.
+ * @tparam speed Pin output speed (ignored for inputs).
+ * @tparam clockMask RCC mask that enables the corresponding GPIO port clock.
+ */
+template<csl::pin::Id pinId,
+         csl::port::Id port,
+         csl::pin::Mode mode,
+         csl::pin::Pull pull,
+         csl::pin::Speed speed,
+         uint32_t clockBits>
+struct GpioTraits
+{
+  typedef csl::Pin<pinId, port> Pin;
+  typedef csl::PinConfiguration<pinId, mode, pull, speed> Configuration;
+  static constexpr csl::port::Id portId = port;
+  static constexpr uint32_t clockMask = clockBits;
 };
 
 } // namespace csl

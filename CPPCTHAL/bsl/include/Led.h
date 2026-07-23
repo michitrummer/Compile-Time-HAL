@@ -12,9 +12,7 @@
 #ifndef BSL_LED_H_
 #define BSL_LED_H_
 
-#include <cstdint>
 #include <csl/include/GpioConfig.h>
-#include <csl/include/Pin.h>
 
 namespace bsl
 {
@@ -33,25 +31,50 @@ enum class LedId
 template<LedId id>
 struct LedTraits;
 
-#define BSL_LED_TRAITS(ID, PIN, PORT, MODE, PULL, SPEED, CLOCK) \
-template<> struct LedTraits<LedId::ID> { \
-  typedef csl::Pin<csl::pin::PIN, csl::port::PORT> Pin; \
-  typedef csl::PinConfiguration<csl::pin::PIN, csl::pin::MODE, csl::pin::PULL, csl::pin::SPEED> Configuration; \
-  static constexpr csl::port::Id portId = csl::port::PORT; \
-  static constexpr uint32_t clockMask = csl::RCC<>::CLOCK; \
-};
+template<>
+struct LedTraits<LedId::ld4>
+  : csl::GpioTraits<csl::pin::pin13, csl::port::b, csl::pin::outPP, csl::pin::noPull, csl::pin::freqLow, csl::RCC<>::ahb2GpioBEn>
+{};
 
-BSL_LED_TRAITS(ld4, pin13, b, outPP, noPull,   freqLow,      ahb2GpioBEn)
-BSL_LED_TRAITS(ex1, pin0,  b, outPP, pullUp,   freqMid,      ahb2GpioBEn)
-BSL_LED_TRAITS(ex2, pin1,  b, outOD, pullDown, freqHigh,     ahb2GpioBEn)
-BSL_LED_TRAITS(ex3, pin2,  b, outPP, noPull,   freqVeryHigh, ahb2GpioBEn)
-BSL_LED_TRAITS(ex4, pin3,  b, outOD, pullUp,   freqLow,      ahb2GpioBEn)
-BSL_LED_TRAITS(ex5, pin4,  b, outPP, pullDown, freqMid,      ahb2GpioBEn)
-BSL_LED_TRAITS(ex6, pin5,  b, outOD, noPull,   freqHigh,     ahb2GpioBEn)
-BSL_LED_TRAITS(ex7, pin6,  e, outPP, pullUp,   freqVeryHigh, ahb2GpioEEn)
-BSL_LED_TRAITS(ex8, pin0,  h, outOD, pullDown, freqLow,      ahb2GpioHEn)
+template<>
+struct LedTraits<LedId::ex1>
+  : csl::GpioTraits<csl::pin::pin0, csl::port::b, csl::pin::outPP, csl::pin::pullUp, csl::pin::freqMid, csl::RCC<>::ahb2GpioBEn>
+{};
 
-#undef BSL_LED_TRAITS
+template<>
+struct LedTraits<LedId::ex2>
+  : csl::GpioTraits<csl::pin::pin1, csl::port::b, csl::pin::outOD, csl::pin::pullDown, csl::pin::freqHigh, csl::RCC<>::ahb2GpioBEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex3>
+  : csl::GpioTraits<csl::pin::pin2, csl::port::b, csl::pin::outPP, csl::pin::noPull, csl::pin::freqVeryHigh, csl::RCC<>::ahb2GpioBEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex4>
+  : csl::GpioTraits<csl::pin::pin3, csl::port::b, csl::pin::outOD, csl::pin::pullUp, csl::pin::freqLow, csl::RCC<>::ahb2GpioBEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex5>
+  : csl::GpioTraits<csl::pin::pin4, csl::port::b, csl::pin::outPP, csl::pin::pullDown, csl::pin::freqMid, csl::RCC<>::ahb2GpioBEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex6>
+  : csl::GpioTraits<csl::pin::pin5, csl::port::b, csl::pin::outOD, csl::pin::noPull, csl::pin::freqHigh, csl::RCC<>::ahb2GpioBEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex7>
+  : csl::GpioTraits<csl::pin::pin6, csl::port::e, csl::pin::outPP, csl::pin::pullUp, csl::pin::freqVeryHigh, csl::RCC<>::ahb2GpioEEn>
+{};
+
+template<>
+struct LedTraits<LedId::ex8>
+  : csl::GpioTraits<csl::pin::pin0, csl::port::h, csl::pin::outOD, csl::pin::pullDown, csl::pin::freqLow, csl::RCC<>::ahb2GpioHEn>
+{};
 
 /**
  * @brief Zero-overhead board-support LED abstraction.
