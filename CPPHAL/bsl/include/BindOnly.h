@@ -11,12 +11,11 @@
 
 #ifndef BSL_BIND_ONLY_H_
 #define BSL_BIND_ONLY_H_
-namespace bsl
-{
+namespace bsl {
 /** @brief Constructor tag selecting GPIO binding without configuration. */
-struct BindOnly { };
+struct BindOnly {};
 
 /** @brief Reusable instance of the bind-only constructor tag. */
 static constexpr BindOnly bindOnly = BindOnly();
-}
+}  // namespace bsl
 #endif

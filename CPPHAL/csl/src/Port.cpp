@@ -10,38 +10,37 @@
  */
 
 #include "../include/Port.h"
+
 #include "../include/RCC.h"
 #include "./periMemMap.h"
 
-namespace csl
-{
+namespace csl {
 
-Port::Port(Id id) :
-  reg(*reinterpret_cast<Regs*>(static_cast<uint32_t>(basePeriphAHB2) + id))
-{
-}
+Port::Port(Id id)
+    : reg(*reinterpret_cast<Regs*>(static_cast<uint32_t>(basePeriphAHB2) +
+                                   id)) {}
 
-uint32_t Port::clockMask(Id id)
-{
-  switch (id)
-  {
-    case a: return RCC::ahb2GpioAEn;
-    case b: return RCC::ahb2GpioBEn;
-    case c: return RCC::ahb2GpioCEn;
-    case d: return RCC::ahb2GpioDEn;
-    case e: return RCC::ahb2GpioEEn;
-    case h: return RCC::ahb2GpioHEn;
+uint32_t Port::clockMask(Id id) {
+  switch (id) {
+    case a:
+      return RCC::ahb2GpioAEn;
+    case b:
+      return RCC::ahb2GpioBEn;
+    case c:
+      return RCC::ahb2GpioCEn;
+    case d:
+      return RCC::ahb2GpioDEn;
+    case e:
+      return RCC::ahb2GpioEEn;
+    case h:
+      return RCC::ahb2GpioHEn;
   }
   return 0u;
 }
 
-void Port::enableClocks(uint32_t mask)
-{
-  RCC::periEnableMask(mask);
-}
+void Port::enableClocks(uint32_t mask) { RCC::periEnableMask(mask); }
 
-void Port::configure(Id id, const Configuration& config)
-{
+void Port::configure(Id id, const Configuration& config) {
   Port port(id);
   if (config.modeMask != 0u)
     port.modeReg() = (port.modeReg() & ~config.modeMask) | config.modeValue;
@@ -53,4 +52,4 @@ void Port::configure(Id id, const Configuration& config)
     port.pullReg() = (port.pullReg() & ~config.pullMask) | config.pullValue;
 }
 
-} // namespace csl
+}  // namespace csl

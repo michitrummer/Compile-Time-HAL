@@ -17,8 +17,7 @@
 #include "../../../InstructionAnalysis/support/direct_gpio.h"
 
 /** @brief Logical LED identifiers used by the benchmark applications. */
-typedef enum
-{
+typedef enum {
   bsl_led4,
   bsl_ledEx1,
   bsl_ledEx2,
@@ -35,10 +34,10 @@ typedef enum
  * @param id Logical LED identifier.
  * @return STM32 GPIO peripheral base address.
  */
-static inline uint32_t bsl_ledPort(bsl_Led id)
-{
-  return id == bsl_ledEx7 ? GPIOE_BASE :
-         id == bsl_ledEx8 ? GPIOH_BASE : GPIOB_BASE;
+static inline uint32_t bsl_ledPort(bsl_Led id) {
+  return id == bsl_ledEx7   ? GPIOE_BASE
+         : id == bsl_ledEx8 ? GPIOH_BASE
+                            : GPIOB_BASE;
 }
 
 /**
@@ -46,21 +45,18 @@ static inline uint32_t bsl_ledPort(bsl_Led id)
  * @param id Logical LED identifier.
  * @return GPIO pin number in the range 0..15.
  */
-static inline uint32_t bsl_ledPin(bsl_Led id)
-{
+static inline uint32_t bsl_ledPin(bsl_Led id) {
   static const uint8_t pins[] = {13u, 0u, 1u, 2u, 3u, 4u, 5u, 6u, 0u};
   return pins[(unsigned)id];
 }
 
 /** @brief Drives the selected LED output high. */
-static inline void bsl_ledOn(bsl_Led id)
-{
+static inline void bsl_ledOn(bsl_Led id) {
   direct_set(bsl_ledPort(id), bsl_ledPin(id));
 }
 
 /** @brief Drives the selected LED output low. */
-static inline void bsl_ledOff(bsl_Led id)
-{
+static inline void bsl_ledOff(bsl_Led id) {
   direct_clear(bsl_ledPort(id), bsl_ledPin(id));
 }
 

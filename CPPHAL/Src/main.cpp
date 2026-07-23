@@ -13,8 +13,7 @@
 #include <bsl/include/Led.h>
 #include <bsl/include/Switch.h>
 
-int main(void)
-{
+int main(void) {
   bsl::BoardConfig::apply();
   bsl::Led led0(bsl::Led::Id::ld4, bsl::bindOnly);
   bsl::Switch sw0(bsl::Switch::Id::b1, bsl::bindOnly);
@@ -35,25 +34,42 @@ int main(void)
   bsl::Led led8(bsl::Led::Id::ld4, bsl::bindOnly);
   bsl::Switch sw8(bsl::Switch::Id::b1, bsl::bindOnly);
 
-  while (1)
-  {
-    if (sw0.pressed()) led0.on();
-    else led0.off();
-    if (sw1.pressed()) led1.on();
-    else led1.off();
-    if (sw2.pressed()) led2.on();
-    else led2.off();
-    if (sw3.pressed()) led3.on();
-    else led3.off();
-    if (sw4.pressed()) led4.on();
-    else led4.off();
-    if (sw5.pressed()) led5.on();
-    else led5.off();
-    if (sw6.pressed()) led6.on();
-    else led6.off();
-    if (sw7.pressed()) led7.on();
-    else led7.off();
-    if (sw8.pressed()) led8.on();
-    else led8.off();
+  while (1) {
+    if (sw0.pressed())
+      led0.on();
+    else
+      led0.off();
+    if (sw1.pressed())
+      led1.on();
+    else
+      led1.off();
+    if (sw2.pressed())
+      led2.on();
+    else
+      led2.off();
+    if (sw3.pressed())
+      led3.on();
+    else
+      led3.off();
+    if (sw4.pressed())
+      led4.on();
+    else
+      led4.off();
+    if (sw5.pressed())
+      led5.on();
+    else
+      led5.off();
+    if (sw6.pressed())
+      led6.on();
+    else
+      led6.off();
+    if (sw7.pressed())
+      led7.on();
+    else
+      led7.off();
+    if (sw8.pressed())
+      led8.on();
+    else
+      led8.off();
   }
 }

@@ -10,23 +10,19 @@
  */
 
 #include "../include/RCC.h"
+
 #include "./periMemMap.h"
 
-namespace csl
-{
+namespace csl {
 
 RCC::Regs& RCC::reg = *reinterpret_cast<Regs*>(
     static_cast<uint32_t>(basePeriphAHB1) + rccBaseOffset);
 
-void RCC::periEnableMask(uint32_t mask)
-{
+void RCC::periEnableMask(uint32_t mask) {
   reg.ahb2enr |= mask;
   (void)reg.ahb2enr;
 }
 
-void RCC::periEnable(PeriId id)
-{
-  periEnableMask(static_cast<uint32_t>(id));
-}
+void RCC::periEnable(PeriId id) { periEnableMask(static_cast<uint32_t>(id)); }
 
-} // namespace csl
+}  // namespace csl

@@ -17,8 +17,7 @@
 #include "./bits.h"
 
 /** @brief AHB2 peripheral-enable masks used by the GPIO benchmark. */
-typedef enum
-{
+typedef enum {
   csl_ahb2GpioAEn = csl_bit0,
   csl_ahb2GpioBEn = csl_bit1,
   csl_ahb2GpioCEn = csl_bit2,

@@ -14,24 +14,22 @@
 
 #include <cstdint>
 
-namespace csl
-{
+namespace csl {
 
 /**
  * @brief Peripheral memory map.
  */
-enum : uint32_t
-{
-	baseFlash  = 0x08000000ul, ///< up to 256KB
-	baseSRAM1  = 0x20000000ul, ///< up to 48KB
-	baseSRAM2  = 0x10000000ul, ///< up to 16KB
-	basePeriph = 0x40000000ul,
-	basePeriphAPB1 = basePeriph + 0x00000000ul,
-	basePeriphAPB2 = basePeriph + 0x00010000ul,
-	basePeriphAHB1 = basePeriph + 0x00020000ul,
-	basePeriphAHB2 = basePeriph + 0x08000000ul
+enum : uint32_t {
+  baseFlash = 0x08000000ul,  ///< up to 256KB
+  baseSRAM1 = 0x20000000ul,  ///< up to 48KB
+  baseSRAM2 = 0x10000000ul,  ///< up to 16KB
+  basePeriph = 0x40000000ul,
+  basePeriphAPB1 = basePeriph + 0x00000000ul,
+  basePeriphAPB2 = basePeriph + 0x00010000ul,
+  basePeriphAHB1 = basePeriph + 0x00020000ul,
+  basePeriphAHB2 = basePeriph + 0x08000000ul
 };
 
-} // namespace csl
+}  // namespace csl
 
 #endif /* CSL_PERIMEMMAP_H_ */

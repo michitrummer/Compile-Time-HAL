@@ -17,8 +17,7 @@
 #include "../../../InstructionAnalysis/support/direct_gpio.h"
 
 /** @brief Logical switch identifiers used by the benchmark applications. */
-typedef enum
-{
+typedef enum {
   bsl_switchB1,
   bsl_switchEx1,
   bsl_switchEx2,
@@ -35,14 +34,11 @@ typedef enum
  * @param id Logical switch identifier.
  * @return STM32 GPIO peripheral base address.
  */
-static inline uint32_t bsl_switchPort(bsl_Switch id)
-{
+static inline uint32_t bsl_switchPort(bsl_Switch id) {
   if (id == bsl_switchB1 || id == bsl_switchEx5 || id == bsl_switchEx6)
     return GPIOC_BASE;
-  if (id == bsl_switchEx7)
-    return GPIOD_BASE;
-  if (id == bsl_switchEx8)
-    return GPIOE_BASE;
+  if (id == bsl_switchEx7) return GPIOD_BASE;
+  if (id == bsl_switchEx8) return GPIOE_BASE;
   return GPIOA_BASE;
 }
 
@@ -51,8 +47,7 @@ static inline uint32_t bsl_switchPort(bsl_Switch id)
  * @param id Logical switch identifier.
  * @return GPIO pin number in the range 0..15.
  */
-static inline uint32_t bsl_switchPin(bsl_Switch id)
-{
+static inline uint32_t bsl_switchPin(bsl_Switch id) {
   static const uint8_t pins[] = {13u, 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u};
   return pins[(unsigned)id];
 }
@@ -63,8 +58,7 @@ static inline uint32_t bsl_switchPin(bsl_Switch id)
  * @retval 0 Input is low.
  * @retval 1 Input is high.
  */
-static inline int bsl_switchPressed(bsl_Switch id)
-{
+static inline int bsl_switchPressed(bsl_Switch id) {
   return direct_get(bsl_switchPort(id), bsl_switchPin(id));
 }
 

@@ -16,14 +16,12 @@
 #include <stdint.h>
 
 /** @brief Sets selected bits in a 32-bit memory-mapped register. */
-static inline void csl_hwReg32SetBits(volatile uint32_t* reg, uint32_t bits)
-{
+static inline void csl_hwReg32SetBits(volatile uint32_t* reg, uint32_t bits) {
   *reg |= bits;
 }
 
 /** @brief Clears selected bits in a 32-bit memory-mapped register. */
-static inline void csl_hwReg32ClearBits(volatile uint32_t* reg, uint32_t bits)
-{
+static inline void csl_hwReg32ClearBits(volatile uint32_t* reg, uint32_t bits) {
   *reg &= ~bits;
 }
 
@@ -31,8 +29,8 @@ static inline void csl_hwReg32ClearBits(volatile uint32_t* reg, uint32_t bits)
  * @brief Tests whether all selected bits are set.
  * @return true when every bit in @p bits is set in @p reg.
  */
-static inline bool csl_hwReg32AreBitsSet(const volatile uint32_t* reg, uint32_t bits)
-{
+static inline bool csl_hwReg32AreBitsSet(const volatile uint32_t* reg,
+                                         uint32_t bits) {
   return (*reg & bits) == bits;
 }
 
@@ -44,8 +42,7 @@ static inline bool csl_hwReg32AreBitsSet(const volatile uint32_t* reg, uint32_t 
  */
 static inline void csl_hwReg32Set2BitSubValue(volatile uint32_t* reg,
                                               uint32_t value,
-                                              unsigned int shift)
-{
+                                              unsigned int shift) {
   csl_hwReg32ClearBits(reg, (uint32_t)((1u << 2u) - 1u) << shift);
   csl_hwReg32SetBits(reg, value << shift);
 }

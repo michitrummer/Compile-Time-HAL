@@ -16,8 +16,7 @@
 #include <stdint.h>
 
 /** @brief Memory-mapped STM32L433 GPIO register block. */
-typedef volatile struct
-{
+typedef volatile struct {
   uint32_t moder;   /**< Mode register. */
   uint32_t otyper;  /**< Output type register. */
   uint32_t ospeedr; /**< Output speed register. */
@@ -30,21 +29,28 @@ typedef volatile struct
   uint32_t brr;     /**< Bit reset register. */
 } csl_Port;
 
-_Static_assert(sizeof(csl_Port) == 0x2Cu, "Unexpected GPIO register block size");
-_Static_assert(offsetof(csl_Port, moder) == 0x00u, "Unexpected GPIO MODER offset");
-_Static_assert(offsetof(csl_Port, otyper) == 0x04u, "Unexpected GPIO OTYPER offset");
-_Static_assert(offsetof(csl_Port, ospeedr) == 0x08u, "Unexpected GPIO OSPEEDR offset");
-_Static_assert(offsetof(csl_Port, pupdr) == 0x0Cu, "Unexpected GPIO PUPDR offset");
+_Static_assert(sizeof(csl_Port) == 0x2Cu,
+               "Unexpected GPIO register block size");
+_Static_assert(offsetof(csl_Port, moder) == 0x00u,
+               "Unexpected GPIO MODER offset");
+_Static_assert(offsetof(csl_Port, otyper) == 0x04u,
+               "Unexpected GPIO OTYPER offset");
+_Static_assert(offsetof(csl_Port, ospeedr) == 0x08u,
+               "Unexpected GPIO OSPEEDR offset");
+_Static_assert(offsetof(csl_Port, pupdr) == 0x0Cu,
+               "Unexpected GPIO PUPDR offset");
 _Static_assert(offsetof(csl_Port, idr) == 0x10u, "Unexpected GPIO IDR offset");
 _Static_assert(offsetof(csl_Port, odr) == 0x14u, "Unexpected GPIO ODR offset");
-_Static_assert(offsetof(csl_Port, bsrr) == 0x18u, "Unexpected GPIO BSRR offset");
-_Static_assert(offsetof(csl_Port, lckr) == 0x1Cu, "Unexpected GPIO LCKR offset");
+_Static_assert(offsetof(csl_Port, bsrr) == 0x18u,
+               "Unexpected GPIO BSRR offset");
+_Static_assert(offsetof(csl_Port, lckr) == 0x1Cu,
+               "Unexpected GPIO LCKR offset");
 _Static_assert(offsetof(csl_Port, afr) == 0x20u, "Unexpected GPIO AFR offset");
 _Static_assert(offsetof(csl_Port, brr) == 0x28u, "Unexpected GPIO BRR offset");
 
-/** @brief GPIO port identifiers encoded as offsets from the AHB2 peripheral base. */
-typedef enum
-{
+/** @brief GPIO port identifiers encoded as offsets from the AHB2 peripheral
+ * base. */
+typedef enum {
   csl_portA = 0x0000ul,
   csl_portB = 0x0400ul,
   csl_portC = 0x0800ul,
@@ -57,11 +63,10 @@ typedef enum
  * @brief Aggregated masks and values for one GPIO port.
  *
  * A zero mask leaves the corresponding register unchanged. This representation
- * allows all pins of one port to be configured with at most one read-modify-write
- * operation per affected register.
+ * allows all pins of one port to be configured with at most one
+ * read-modify-write operation per affected register.
  */
-typedef struct
-{
+typedef struct {
   uint32_t modeMask;
   uint32_t modeValue;
   uint32_t typeMask;

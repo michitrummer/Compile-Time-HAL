@@ -11,27 +11,22 @@
 
 #include "../include/Pin.h"
 
-namespace csl
-{
+namespace csl {
 
-Pin::Pin(Port::Id portId, Id id) :
-  port(portId),
-  bit(bit0 << id)
-{
-}
+Pin::Pin(Port::Id portId, Id id) : port(portId), bit(bit0 << id) {}
 
-Pin::Pin(Port::Id portId, Id id, Mode mod, Pull pull, Speed speed) :
-  Pin(portId, id)
-{
+Pin::Pin(Port::Id portId, Id id, Mode mod, Pull pull, Speed speed)
+    : Pin(portId, id) {
   Port::enableClocks(Port::clockMask(portId));
 
   const unsigned int twoBitShift = id << 1u;
-  HwReg<uint32_t>::setSubValue<2>(port.modeReg(), mod & (bit0 | bit1), twoBitShift);
+  HwReg<uint32_t>::setSubValue<2>(port.modeReg(), mod & (bit0 | bit1),
+                                  twoBitShift);
 
-  if ((mod == outPP) || (mod == outOD))
-  {
+  if ((mod == outPP) || (mod == outOD)) {
     HwReg<uint32_t>::setSubValue<2>(port.speedReg(), speed, twoBitShift);
-    if (((mod & static_cast<uint32_t>(gpioOutputTypeMask)) >> gpioOutputTypeShift) != 0u)
+    if (((mod & static_cast<uint32_t>(gpioOutputTypeMask)) >>
+         gpioOutputTypeShift) != 0u)
       HwReg<uint32_t>::setBits(port.typeReg(), bit);
     else
       HwReg<uint32_t>::clearBits(port.typeReg(), bit);
@@ -40,4 +35,4 @@ Pin::Pin(Port::Id portId, Id id, Mode mod, Pull pull, Speed speed) :
   HwReg<uint32_t>::setSubValue<2>(port.pullReg(), pull, twoBitShift);
 }
 
-} // namespace csl
+}  // namespace csl

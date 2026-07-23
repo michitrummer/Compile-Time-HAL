@@ -7,6 +7,7 @@ RUN apt-get update \
     binutils-arm-none-eabi \
     libnewlib-arm-none-eabi \
     libstdc++-arm-none-eabi-newlib \
+    clang-format \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
