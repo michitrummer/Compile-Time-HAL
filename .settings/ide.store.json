@@ -1,0 +1,5 @@
+{
+  "board": "NUCLEO-L433RC-P",
+  "device": "STM32L433RCT6P",
+  "toolchain": "GCC"
+}
