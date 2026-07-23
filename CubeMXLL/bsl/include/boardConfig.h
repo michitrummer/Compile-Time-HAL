@@ -1,5 +1,10 @@
 #ifndef CUBELL_BSL_BOARD_CONFIG_H
 #define CUBELL_BSL_BOARD_CONFIG_H
+#ifndef USE_FULL_LL_DRIVER
+#define USE_FULL_LL_DRIVER
+#endif
+#include "stm32l4xx_ll_bus.h"
+#include "stm32l4xx_ll_gpio.h"
 #include "main.h"
 static inline void bsl_boardConfigureGpio(void){ LL_GPIO_InitTypeDef i={0}; LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC|LL_AHB2_GRP1_PERIPH_GPIOB); i.Pin=B1_Pin;i.Mode=LL_GPIO_MODE_INPUT;i.Speed=LL_GPIO_SPEED_FREQ_LOW;i.OutputType=LL_GPIO_OUTPUT_PUSHPULL;i.Pull=LL_GPIO_PULL_NO;i.Alternate=LL_GPIO_AF_0;LL_GPIO_Init(B1_GPIO_Port,&i); i.Pin=LD4_Pin;i.Mode=LL_GPIO_MODE_OUTPUT;LL_GPIO_Init(LD4_GPIO_Port,&i); }
 static inline void bsl_boardConfigureGpioMultiEx(void){

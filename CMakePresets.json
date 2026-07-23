@@ -1,0 +1,50 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "arm-gcc-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/toolchains/arm-none-eabi-gcc.cmake"
+      }
+    },
+    {
+      "name": "arm-gcc-debug",
+      "displayName": "ARM GCC Debug",
+      "description": "Configure all firmware targets with GNU Arm Embedded toolchain (Debug).",
+      "inherits": "arm-gcc-base",
+      "binaryDir": "${sourceDir}/build/arm-gcc-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "arm-gcc-release",
+      "displayName": "ARM GCC Release",
+      "description": "Configure all firmware targets with GNU Arm Embedded toolchain (Release).",
+      "inherits": "arm-gcc-base",
+      "binaryDir": "${sourceDir}/build/arm-gcc-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "arm-gcc-debug",
+      "displayName": "Build all firmware targets (Debug)",
+      "configurePreset": "arm-gcc-debug"
+    },
+    {
+      "name": "arm-gcc-release",
+      "displayName": "Build all firmware targets (Release)",
+      "configurePreset": "arm-gcc-release"
+    }
+  ]
+}

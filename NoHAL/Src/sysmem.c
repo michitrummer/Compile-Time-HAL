@@ -50,6 +50,8 @@
 #include <errno.h>
 #include <stdio.h>
 
+typedef char *caddr_t;
+
 /* Variables */
 extern int errno;
 register char * stack_ptr asm("sp");

@@ -1,6 +1,8 @@
 {
   "name": "Compile-Time-HAL C++",
-  "image": "mcr.microsoft.com/devcontainers/cpp:1-ubuntu-24.04",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
