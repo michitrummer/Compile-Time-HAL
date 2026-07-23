@@ -194,16 +194,16 @@ struct PortConfiguration
   static void apply()
   {
     if constexpr (modeMask != 0u)
-      Port<Id>::modeReg() = (Port<Id>::modeReg() & ~modeMask) | modeValue;
+      HwReg<std::uint32_t>::writeMasked(Port<Id>::modeReg(), modeMask, modeValue);
 
     if constexpr (typeMask != 0u)
-      Port<Id>::typeReg() = (Port<Id>::typeReg() & ~typeMask) | typeValue;
+      HwReg<std::uint32_t>::writeMasked(Port<Id>::typeReg(), typeMask, typeValue);
 
     if constexpr (speedMask != 0u)
-      Port<Id>::speedReg() = (Port<Id>::speedReg() & ~speedMask) | speedValue;
+      HwReg<std::uint32_t>::writeMasked(Port<Id>::speedReg(), speedMask, speedValue);
 
     if constexpr (pullMask != 0u)
-      Port<Id>::pullReg() = (Port<Id>::pullReg() & ~pullMask) | pullValue;
+      HwReg<std::uint32_t>::writeMasked(Port<Id>::pullReg(), pullMask, pullValue);
   }
 };
 
