@@ -1,0 +1,18 @@
+/**
+ * @file chal.c
+ * @brief Single benchmark application for the chal implementation.
+ *
+ * Created on: 2026-07-22
+ * Author: Michael Trummer
+ *
+ * Copyright 2026 Michael Trummer
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <bsl/include/boardConfig.h>
+#include <bsl/include/led.h>
+#include <bsl/include/switch.h>
+#define BENCHMARK_LOOP_START() __asm volatile(".global benchmark_loop_start\nbenchmark_loop_start:" ::: "memory")
+#define BENCHMARK_LOOP_END() __asm volatile(".global benchmark_loop_end\nbenchmark_loop_end:" ::: "memory")
+
+int main(void){ bsl_Led led; bsl_Switch sw; bsl_boardConfigureGpio(); bsl_ledBind(&led,bsl_led4); bsl_switchBind(&sw,bsl_switchB1); while(1){ BENCHMARK_LOOP_START(); if(bsl_switchPressed(&sw)) bsl_ledOn(&led); else bsl_ledOff(&led); BENCHMARK_LOOP_END(); } }

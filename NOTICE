@@ -1,0 +1,6 @@
+Nucleo64HAL benchmark and HAL examples
+Copyright 2026 Michael Trummer
+
+This distribution contains STM32Cube and other STMicroelectronics-provided
+files. Those third-party files retain their original copyright and license
+notices and are not relicensed under Apache-2.0 by this project.
