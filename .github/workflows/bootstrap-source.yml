@@ -20,7 +20,10 @@ jobs:
       - name: Reassemble and verify Rev11 project source
         shell: bash
         run: |
-          cat bootstrap/rev11-xz-part*.b64 | base64 --decode > bootstrap/rev11-src.tar.xz
+          : > bootstrap/rev11-src.tar.xz
+          for part in bootstrap/rev11-xz-part*.b64; do
+            base64 --decode "$part" >> bootstrap/rev11-src.tar.xz
+          done
           echo "75670f204ce8d7d79fac7f9cc3ec8e6538111aea3076f44a970470434be75d23  bootstrap/rev11-src.tar.xz" | sha256sum --check
           xz -t bootstrap/rev11-src.tar.xz
           tar -xJf bootstrap/rev11-src.tar.xz
