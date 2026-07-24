@@ -1,0 +1,54 @@
+cmake_minimum_required(VERSION 3.22)
+
+set(CPPHAL_STANDALONE OFF)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(CPPHAL_STANDALONE ON)
+  if(NOT CMAKE_TOOLCHAIN_FILE)
+    set(
+      CMAKE_TOOLCHAIN_FILE
+      "${CMAKE_CURRENT_LIST_DIR}/../cmake/toolchains/arm-none-eabi-gcc.cmake"
+      CACHE FILEPATH "CMake toolchain file"
+    )
+  endif()
+  project(CPPHAL LANGUAGES C CXX ASM)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/CompileTimeHal.cmake")
+cthal_validate_toolchain()
+
+set(CPPHAL_COMMON_SOURCES
+  "${CMAKE_CURRENT_LIST_DIR}/Src/syscalls.c"
+  "${CMAKE_CURRENT_LIST_DIR}/Src/sysmem.c"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/Pin.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/Port.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/RCC.cpp"
+)
+set(CPPHAL_STARTUP
+  "${CMAKE_CURRENT_LIST_DIR}/Startup/startup_stm32l433rctxp.s"
+)
+set(CPPHAL_LINKER_SCRIPT
+  "${CTHAL_REPOSITORY_ROOT}/CPPCTHAL/stm32l433xc_flash.ld"
+)
+
+cthal_add_firmware(CPPHAL
+  MODE STM32CUBE
+  MAIN_SOURCE "${CMAKE_CURRENT_LIST_DIR}/Src/main.cpp"
+  STARTUP_SOURCE "${CPPHAL_STARTUP}"
+  LINKER_SCRIPT "${CPPHAL_LINKER_SCRIPT}"
+  CXX_STANDARD 17
+  SOURCES ${CPPHAL_COMMON_SOURCES}
+  INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
+)
+
+if(NOT CPPHAL_STANDALONE)
+  cthal_add_benchmarks(
+    TARGET_PREFIX cpphal
+    SOURCE_BASENAME cpphal.cpp
+    STARTUP_SOURCE "${CPPHAL_STARTUP}"
+    LINKER_SCRIPT "${CPPHAL_LINKER_SCRIPT}"
+    CXX_STANDARD 17
+    SOURCES ${CPPHAL_COMMON_SOURCES}
+    INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
+  )
+endif()

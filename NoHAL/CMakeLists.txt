@@ -1,0 +1,53 @@
+cmake_minimum_required(VERSION 3.22)
+
+set(NOHAL_STANDALONE OFF)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(NOHAL_STANDALONE ON)
+  if(NOT CMAKE_TOOLCHAIN_FILE)
+    set(
+      CMAKE_TOOLCHAIN_FILE
+      "${CMAKE_CURRENT_LIST_DIR}/../cmake/toolchains/arm-none-eabi-gcc.cmake"
+      CACHE FILEPATH "CMake toolchain file"
+    )
+  endif()
+  project(NoHAL LANGUAGES C ASM)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/CompileTimeHal.cmake")
+cthal_validate_toolchain()
+
+set(NOHAL_COMMON_SOURCES
+  "${CMAKE_CURRENT_LIST_DIR}/Src/syscalls.c"
+  "${CMAKE_CURRENT_LIST_DIR}/Src/sysmem.c"
+)
+set(NOHAL_STARTUP
+  "${CMAKE_CURRENT_LIST_DIR}/Startup/startup_stm32l433rctxp.s"
+)
+set(NOHAL_LINKER_SCRIPT
+  "${CTHAL_REPOSITORY_ROOT}/CPPCTHAL/stm32l433xc_flash.ld"
+)
+
+cthal_add_firmware(NoHAL
+  MODE STM32CUBE
+  MAIN_SOURCE "${CMAKE_CURRENT_LIST_DIR}/Src/main.c"
+  STARTUP_SOURCE "${NOHAL_STARTUP}"
+  LINKER_SCRIPT "${NOHAL_LINKER_SCRIPT}"
+  SOURCES ${NOHAL_COMMON_SOURCES}
+  INCLUDE_DIRS
+    "${CMAKE_CURRENT_LIST_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/Src"
+)
+
+if(NOT NOHAL_STANDALONE)
+  cthal_add_benchmarks(
+    TARGET_PREFIX nohal
+    SOURCE_BASENAME nohal.c
+    STARTUP_SOURCE "${NOHAL_STARTUP}"
+    LINKER_SCRIPT "${NOHAL_LINKER_SCRIPT}"
+    SOURCES ${NOHAL_COMMON_SOURCES}
+    INCLUDE_DIRS
+      "${CMAKE_CURRENT_LIST_DIR}"
+      "${CMAKE_CURRENT_LIST_DIR}/Src"
+  )
+endif()

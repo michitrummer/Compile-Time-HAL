@@ -1,67 +1,51 @@
-# Set the minimum version of CMake that can be used
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22)
 
-# Enable compile command to ease indexing with e.g. clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-set(CMAKE_C_COMPILER_FORCED TRUE)
-set(CMAKE_CXX_COMPILER_FORCED TRUE)
+set(CPPCTHAL_STANDALONE OFF)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(CPPCTHAL_STANDALONE ON)
+  if(NOT CMAKE_TOOLCHAIN_FILE)
+    set(
+      CMAKE_TOOLCHAIN_FILE
+      "${CMAKE_CURRENT_LIST_DIR}/../cmake/toolchains/arm-none-eabi-gcc.cmake"
+      CACHE FILEPATH "CMake toolchain file"
+    )
+  endif()
+  project(CPPCTHAL LANGUAGES C CXX ASM)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
 
-# Set target definition variables required by the toolchain file
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/target.cmake)
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/CompileTimeHal.cmake")
+cthal_validate_toolchain()
 
-# Set the toolchain file for cross-compilation
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/gcc-arm-none-eabi.cmake)
-
-# Project definition
-project(CPPCTHAL)
-
-# Enable CMake support for ASM and C/CPP languages
-enable_language(C CXX ASM)
-
-set(PROJECT_NAME CPPCTHAL)
-
-# Create an executable object type
-add_executable(${PROJECT_NAME})
-
-# Include additional CMake files for flags, components, and files
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/flags.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/components.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/files.cmake)
-
-# Add sources to executable/library
-target_sources(${PROJECT_NAME} PRIVATE
-  Src/main.cpp
-  Src/startup_stm32l433xx.S
-  Src/syscall.c
-  Src/sysmem.c 
+set(CPPCTHAL_COMMON_SOURCES
+  "${CMAKE_CURRENT_LIST_DIR}/Src/syscall.c"
+  "${CMAKE_CURRENT_LIST_DIR}/Src/sysmem.c"
+)
+set(CPPCTHAL_STARTUP
+  "${CMAKE_CURRENT_LIST_DIR}/Src/startup_stm32l433xx.S"
+)
+set(CPPCTHAL_LINKER_SCRIPT
+  "${CMAKE_CURRENT_LIST_DIR}/stm32l433xc_flash.ld"
 )
 
-# Add include directories
-target_include_directories(${PROJECT_NAME} PRIVATE
-  .
+cthal_add_firmware(CPPCTHAL
+  MODE STM32CUBE
+  MAIN_SOURCE "${CMAKE_CURRENT_LIST_DIR}/Src/main.cpp"
+  STARTUP_SOURCE "${CPPCTHAL_STARTUP}"
+  LINKER_SCRIPT "${CPPCTHAL_LINKER_SCRIPT}"
+  CXX_STANDARD 17
+  SOURCES ${CPPCTHAL_COMMON_SOURCES}
+  INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
 )
 
-# Compiler options
-target_compile_options(${PROJECT_NAME} PRIVATE
-  # User defined compiler options
-)
-
-# Add additional defined symbols
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-  # Add additional defined symbols here
-)
-
-# Linker options
-target_link_options(${PROJECT_NAME} PRIVATE 
-  # User defined linker options
-)
-
-# Add additional linker search directories
-target_link_directories(${PROJECT_NAME} PRIVATE
-  # Add additional linker search directories here
-)
-
-# Add additional linker libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE
-  # Add additional linker libraries here
-)
+if(NOT CPPCTHAL_STANDALONE)
+  cthal_add_benchmarks(
+    TARGET_PREFIX cppcthal
+    SOURCE_BASENAME cppcthal.cpp
+    STARTUP_SOURCE "${CPPCTHAL_STARTUP}"
+    LINKER_SCRIPT "${CPPCTHAL_LINKER_SCRIPT}"
+    CXX_STANDARD 17
+    SOURCES ${CPPCTHAL_COMMON_SOURCES}
+    INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
+  )
+endif()
