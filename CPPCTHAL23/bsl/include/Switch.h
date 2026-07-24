@@ -13,9 +13,6 @@
 #define BSL23_SWITCH_H_
 
 #include <csl/include/GpioConfig.h>
-#include <csl/include/Pin.h>
-
-#include <cstdint>
 
 namespace bsl {
 
@@ -24,33 +21,65 @@ namespace bsl {
 enum class SwitchId { b1, ex1, ex2, ex3, ex4, ex5, ex6, ex7, ex8 };
 
 /**
- * @brief Maps a logical switch ID to a C++23 GPIO type and PinConfig value.
+ * @brief Maps a logical switch ID to its compile-time GPIO traits.
  * @tparam Id Logical board identifier.
  */
 template <SwitchId Id>
 struct SwitchTraits;
 
-#define BSL23_SWITCH_TRAITS(ID, PIN, PORT, PULL, CLOCK)                  \
-  template <>                                                            \
-  struct SwitchTraits<SwitchId::ID> {                                    \
-    inline static constexpr csl::port::Id portId = csl::port::Id::PORT;  \
-    inline static constexpr csl::PinConfig configuration{                \
-        csl::pin::Id::PIN, csl::pin::Mode::inp, csl::pin::Pull::PULL,    \
-        csl::pin::Speed::freqLow};                                       \
-    inline static constexpr std::uint32_t clockMask = csl::RCC<>::CLOCK; \
-    using Pin = csl::Pin<configuration.id, portId>;                      \
-  };
+template <>
+struct SwitchTraits<SwitchId::b1>
+    : csl::GpioTraits<csl::pin::Id::pin13, csl::port::Id::c,
+                      csl::pin::Mode::inp, csl::pin::Pull::noPull,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioCEn> {};
 
-BSL23_SWITCH_TRAITS(b1, pin13, c, noPull, ahb2GpioCEn)
-BSL23_SWITCH_TRAITS(ex1, pin0, a, pullUp, ahb2GpioAEn)
-BSL23_SWITCH_TRAITS(ex2, pin1, a, pullDown, ahb2GpioAEn)
-BSL23_SWITCH_TRAITS(ex3, pin2, a, noPull, ahb2GpioAEn)
-BSL23_SWITCH_TRAITS(ex4, pin3, a, pullUp, ahb2GpioAEn)
-BSL23_SWITCH_TRAITS(ex5, pin4, c, pullDown, ahb2GpioCEn)
-BSL23_SWITCH_TRAITS(ex6, pin5, c, noPull, ahb2GpioCEn)
-BSL23_SWITCH_TRAITS(ex7, pin6, d, pullUp, ahb2GpioDEn)
-BSL23_SWITCH_TRAITS(ex8, pin7, e, pullDown, ahb2GpioEEn)
-#undef BSL23_SWITCH_TRAITS
+template <>
+struct SwitchTraits<SwitchId::ex1>
+    : csl::GpioTraits<csl::pin::Id::pin0, csl::port::Id::a,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullUp,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioAEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex2>
+    : csl::GpioTraits<csl::pin::Id::pin1, csl::port::Id::a,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullDown,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioAEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex3>
+    : csl::GpioTraits<csl::pin::Id::pin2, csl::port::Id::a,
+                      csl::pin::Mode::inp, csl::pin::Pull::noPull,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioAEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex4>
+    : csl::GpioTraits<csl::pin::Id::pin3, csl::port::Id::a,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullUp,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioAEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex5>
+    : csl::GpioTraits<csl::pin::Id::pin4, csl::port::Id::c,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullDown,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioCEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex6>
+    : csl::GpioTraits<csl::pin::Id::pin5, csl::port::Id::c,
+                      csl::pin::Mode::inp, csl::pin::Pull::noPull,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioCEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex7>
+    : csl::GpioTraits<csl::pin::Id::pin6, csl::port::Id::d,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullUp,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioDEn> {};
+
+template <>
+struct SwitchTraits<SwitchId::ex8>
+    : csl::GpioTraits<csl::pin::Id::pin7, csl::port::Id::e,
+                      csl::pin::Mode::inp, csl::pin::Pull::pullDown,
+                      csl::pin::Speed::freqLow, csl::RCC<>::ahb2GpioEEn> {};
 
 /**
  * @brief Board-support switch abstraction resolved entirely at compile time.
