@@ -26,8 +26,8 @@ struct BoardConfig {
     using L = LedTraits<LedId::ld4>;
     using S = SwitchTraits<SwitchId::b1>;
     csl::GpioClockConfiguration<L::clockMask | S::clockMask>::apply();
-    csl::PortConfiguration<L::portId, L::configuration>::apply();
-    csl::PortConfiguration<S::portId, S::configuration>::apply();
+    csl::PortConfiguration<L::portId, L>::apply();
+    csl::PortConfiguration<S::portId, S>::apply();
   }
 
   /** @brief Configures all GPIOs used by the diversified MultiEx benchmark. */
@@ -58,19 +58,13 @@ struct BoardConfig {
         L6::clockMask | S6::clockMask | L7::clockMask | S7::clockMask |
         L8::clockMask | S8::clockMask>::apply();
 
-    csl::PortConfiguration<csl::port::Id::a, S1::configuration,
-                           S2::configuration, S3::configuration,
-                           S4::configuration>::apply();
-    csl::PortConfiguration<csl::port::Id::b, L1::configuration,
-                           L2::configuration, L3::configuration,
-                           L4::configuration, L5::configuration,
-                           L6::configuration, L0::configuration>::apply();
-    csl::PortConfiguration<csl::port::Id::c, S5::configuration,
-                           S6::configuration, S0::configuration>::apply();
-    csl::PortConfiguration<csl::port::Id::d, S7::configuration>::apply();
-    csl::PortConfiguration<csl::port::Id::e, L7::configuration,
-                           S8::configuration>::apply();
-    csl::PortConfiguration<csl::port::Id::h, L8::configuration>::apply();
+    csl::PortConfiguration<csl::port::Id::a, S1, S2, S3, S4>::apply();
+    csl::PortConfiguration<csl::port::Id::b, L1, L2, L3, L4, L5, L6,
+                           L0>::apply();
+    csl::PortConfiguration<csl::port::Id::c, S5, S6, S0>::apply();
+    csl::PortConfiguration<csl::port::Id::d, S7>::apply();
+    csl::PortConfiguration<csl::port::Id::e, L7, S8>::apply();
+    csl::PortConfiguration<csl::port::Id::h, L8>::apply();
   }
 };
 
