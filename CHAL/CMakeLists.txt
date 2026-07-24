@@ -1,0 +1,52 @@
+cmake_minimum_required(VERSION 3.22)
+
+set(CHAL_STANDALONE OFF)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  set(CHAL_STANDALONE ON)
+  if(NOT CMAKE_TOOLCHAIN_FILE)
+    set(
+      CMAKE_TOOLCHAIN_FILE
+      "${CMAKE_CURRENT_LIST_DIR}/../cmake/toolchains/arm-none-eabi-gcc.cmake"
+      CACHE FILEPATH "CMake toolchain file"
+    )
+  endif()
+  project(CHAL LANGUAGES C ASM)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/CompileTimeHal.cmake")
+cthal_validate_toolchain()
+
+set(CHAL_COMMON_SOURCES
+  "${CMAKE_CURRENT_LIST_DIR}/Src/syscalls.c"
+  "${CMAKE_CURRENT_LIST_DIR}/Src/sysmem.c"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/pin.c"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/port.c"
+  "${CMAKE_CURRENT_LIST_DIR}/csl/src/rcc.c"
+)
+set(CHAL_STARTUP
+  "${CMAKE_CURRENT_LIST_DIR}/Src/startup_stm32l433xx.S"
+)
+set(CHAL_LINKER_SCRIPT
+  "${CTHAL_REPOSITORY_ROOT}/CPPCTHAL/stm32l433xc_flash.ld"
+)
+
+cthal_add_firmware(CHAL
+  MODE STM32CUBE
+  MAIN_SOURCE "${CMAKE_CURRENT_LIST_DIR}/Src/main.c"
+  STARTUP_SOURCE "${CHAL_STARTUP}"
+  LINKER_SCRIPT "${CHAL_LINKER_SCRIPT}"
+  SOURCES ${CHAL_COMMON_SOURCES}
+  INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
+)
+
+if(NOT CHAL_STANDALONE)
+  cthal_add_benchmarks(
+    TARGET_PREFIX chal
+    SOURCE_BASENAME chal.c
+    STARTUP_SOURCE "${CHAL_STARTUP}"
+    LINKER_SCRIPT "${CHAL_LINKER_SCRIPT}"
+    SOURCES ${CHAL_COMMON_SOURCES}
+    INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}"
+  )
+endif()

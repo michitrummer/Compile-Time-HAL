@@ -14,7 +14,7 @@
 
 #include <stdint.h>
 
-#include "../../../InstructionAnalysis/support/direct_gpio.h"
+#include <Src/direct_gpio.h>
 
 /** @brief Logical switch identifiers used by the benchmark applications. */
 typedef enum {

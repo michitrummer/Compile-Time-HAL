@@ -11,7 +11,7 @@
 
 #ifndef NOHAL_BSL_BOARD_CONFIG_H
 #define NOHAL_BSL_BOARD_CONFIG_H
-#include "../../../InstructionAnalysis/support/direct_gpio.h"
+#include <Src/direct_gpio.h>
 /** @brief Configures the standard LD4/B1 GPIO mapping with aggregated port
  * updates. */
 static inline void bsl_boardConfigureGpio(void) {
