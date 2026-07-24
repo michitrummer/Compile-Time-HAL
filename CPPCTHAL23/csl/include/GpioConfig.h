@@ -136,37 +136,62 @@ template <PinConfig Config>
 concept ValidPinConfiguration = detail::validPinConfiguration(Config);
 
 /**
+ * @brief Shared compile-time GPIO mapping.
+ * @tparam PinId Physical GPIO pin number.
+ * @tparam PortId Physical GPIO port.
+ * @tparam Mode Pin operating mode.
+ * @tparam Pull Pin pull resistor configuration.
+ * @tparam Speed Pin output speed (ignored for inputs).
+ * @tparam ClockMask RCC mask that enables the corresponding GPIO port clock.
+ */
+template <pin::Id PinId, port::Id PortId, pin::Mode Mode, pin::Pull Pull,
+          pin::Speed Speed, std::uint32_t ClockMask>
+  requires SupportedPort<PortId> &&
+           ValidPinConfiguration<PinConfig{PinId, Mode, Pull, Speed}>
+struct GpioTraits {
+  using Pin = csl::Pin<PinId, PortId>;
+  inline static constexpr PinConfig configuration{PinId, Mode, Pull, Speed};
+  inline static constexpr port::Id portId = PortId;
+  inline static constexpr std::uint32_t clockMask = ClockMask;
+};
+
+/**
  * @brief Aggregates C++23 PinConfig values into one configuration per GPIO
  * port.
  * @tparam Id GPIO port selected at compile time.
- * @tparam Configs Structural PinConfig values belonging to the port.
+ * @tparam Traits GpioTraits types belonging to that port.
  *
  * Fold expressions combine masks without template recursion, while consteval
- * validation rejects unsupported values and duplicate pin assignments.
+ * validation rejects unsupported values, duplicate pin assignments and
+ * mappings for another port.
  */
-template <port::Id Id, PinConfig... Configs>
-  requires SupportedPort<Id> && (ValidPinConfiguration<Configs> && ...)
+template <port::Id Id, typename... Traits>
+  requires SupportedPort<Id> &&
+           (ValidPinConfiguration<Traits::configuration> && ...)
 struct PortConfiguration {
   static_assert(
-      detail::pinsAreUnique<Configs...>(),
+      ((Traits::portId == Id) && ...),
+      "PortConfiguration Id must match every GpioTraits::portId");
+  static_assert(
+      detail::pinsAreUnique<Traits::configuration...>(),
       "A GPIO pin is configured more than once in one port configuration");
 
   inline static constexpr std::uint32_t modeMask =
-      (0u | ... | detail::modeMask(Configs));
+      (0u | ... | detail::modeMask(Traits::configuration));
   inline static constexpr std::uint32_t modeValue =
-      (0u | ... | detail::modeValue(Configs));
+      (0u | ... | detail::modeValue(Traits::configuration));
   inline static constexpr std::uint32_t typeMask =
-      (0u | ... | detail::typeMask(Configs));
+      (0u | ... | detail::typeMask(Traits::configuration));
   inline static constexpr std::uint32_t typeValue =
-      (0u | ... | detail::typeValue(Configs));
+      (0u | ... | detail::typeValue(Traits::configuration));
   inline static constexpr std::uint32_t speedMask =
-      (0u | ... | detail::speedMask(Configs));
+      (0u | ... | detail::speedMask(Traits::configuration));
   inline static constexpr std::uint32_t speedValue =
-      (0u | ... | detail::speedValue(Configs));
+      (0u | ... | detail::speedValue(Traits::configuration));
   inline static constexpr std::uint32_t pullMask =
-      (0u | ... | detail::pullMask(Configs));
+      (0u | ... | detail::pullMask(Traits::configuration));
   inline static constexpr std::uint32_t pullValue =
-      (0u | ... | detail::pullValue(Configs));
+      (0u | ... | detail::pullValue(Traits::configuration));
 
   static void apply() {
     if constexpr (modeMask != 0u)
