@@ -1,1 +1,8 @@
 /build/
+CHAL/build/
+CPPHAL/build/
+CPPCTHAL/build/
+CPPCTHAL23/build/
+CubeMXHAL/build/
+CubeMXLL/build/
+NoHal/build/
