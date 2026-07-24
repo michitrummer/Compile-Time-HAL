@@ -5,4 +5,5 @@ CPPCTHAL/build/
 CPPCTHAL23/build/
 CubeMXHAL/build/
 CubeMXLL/build/
-NoHal/build//MemoryAnalysis/
+NoHal/build/
+MemoryAnalysis/
