@@ -65,14 +65,42 @@ LDS
 
 COMMON=(-target arm-none-eabi -mcpu=cortex-m4 -mthumb -ffreestanding -fno-builtin -O3 -fno-unroll-loops -DSTM32L433xx -ffunction-sections -fdata-sections -fstack-usage -fno-unwind-tables -fno-asynchronous-unwind-tables -c)
 CXX=(-fno-exceptions -fno-rtti -fno-threadsafe-statics -I"$ROOT/InstructionAnalysis/support")
-HAL_INC=(-I"$ROOT/CubeMXHAL/Inc" -I"$ROOT/CubeMXHAL/Drivers/CMSIS/Include" -I"$ROOT/CubeMXHAL/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -I"$ROOT/CubeMXHAL/Drivers/STM32L4xx_HAL_Driver/Inc")
-LL_INC=(-I"$ROOT/CubeMXLL/Inc" -I"$ROOT/CubeMXLL/Drivers/CMSIS/Include" -I"$ROOT/CubeMXLL/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -I"$ROOT/CubeMXLL/Drivers/STM32L4xx_HAL_Driver/Inc")
+
+if ! command -v arm-none-eabi-g++ >/dev/null 2>&1; then
+  echo "error: arm-none-eabi-g++ not found; required for C++ standard headers" >&2
+  exit 1
+fi
+
+mapfile -t ARM_CXX_INCLUDE_DIRS < <(
+  echo | arm-none-eabi-g++ -x c++ -E -v - 2>&1 | awk '
+    /#include <...> search starts here:/ {capture=1; next}
+    /End of search list\./ {capture=0}
+    capture {
+      sub(/^[[:space:]]+/, "", $0)
+      if (length($0) > 0) print $0
+    }
+  '
+)
+
+for inc in "${ARM_CXX_INCLUDE_DIRS[@]}"; do
+  if [[ -d "$inc" ]]; then
+    CXX+=(-isystem "$inc")
+  fi
+done
+
+if [[ ${#ARM_CXX_INCLUDE_DIRS[@]} -eq 0 ]]; then
+  echo "error: failed to discover ARM C++ include directories" >&2
+  exit 1
+fi
+
+HAL_INC=(-I"$ROOT/CubeMXHAL" -I"$ROOT/CubeMXHAL/Inc" -I"$ROOT/CubeMXHAL/Drivers/CMSIS/Include" -I"$ROOT/CubeMXHAL/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -I"$ROOT/CubeMXHAL/Drivers/STM32L4xx_HAL_Driver/Inc")
+LL_INC=(-I"$ROOT/CubeMXLL" -I"$ROOT/CubeMXLL/Inc" -I"$ROOT/CubeMXLL/Drivers/CMSIS/Include" -I"$ROOT/CubeMXLL/Drivers/CMSIS/Device/ST/STM32L4xx/Include" -I"$ROOT/CubeMXLL/Drivers/STM32L4xx_HAL_Driver/Inc")
 
 compile_c() { local out=$1; shift; clang "${COMMON[@]}" "$@" -o "$out"; }
 compile_cpp() { local out=$1; shift; clang++ "${COMMON[@]}" "${CXX[@]}" "$@" -o "$out"; }
 link_elf() { local out=$1; local entry=$2; shift 2; ld.lld -flavor gnu -T "$OUT/minimal.ld" -e "$entry" --gc-sections -Map="${out%.elf}.map" -o "$out" "$@"; }
 
-for example in Single MultiCall MultiExCall; do
+for example in Single MultiCall; do
   SRC="$ROOT/Examples/$example"
   for impl in nohal chal cpphal cppcthal cubemx-hal cubemx-ll; do
     DIR="$OBJ/$example/$impl"

@@ -8,6 +8,7 @@ RUN apt-get update \
     libnewlib-arm-none-eabi \
     libstdc++-arm-none-eabi-newlib \
     clang-format \
+    lld \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
