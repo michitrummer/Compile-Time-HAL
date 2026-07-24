@@ -1,6 +1,6 @@
 /**
  * @file cpphal.cpp
- * @brief MultiCall benchmark application for the cpphal implementation.
+ * @brief MultiExCall benchmark application for the cpphal implementation.
  *
  * Created on: 2026-07-22
  * Author: Michael Trummer
@@ -20,25 +20,25 @@
                                                                        "y")
 
 int main(void) {
-  bsl::BoardConfig::apply();
+  bsl::BoardConfig::applyMultiEx();
   bsl::Led led0(bsl::Led::Id::ld4, bsl::bindOnly);
   bsl::Switch sw0(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led1(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw1(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led2(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw2(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led3(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw3(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led4(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw4(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led5(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw5(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led6(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw6(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led7(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw7(bsl::Switch::Id::b1, bsl::bindOnly);
-  bsl::Led led8(bsl::Led::Id::ld4, bsl::bindOnly);
-  bsl::Switch sw8(bsl::Switch::Id::b1, bsl::bindOnly);
+  bsl::Led led1(bsl::Led::Id::ex1, bsl::bindOnly);
+  bsl::Switch sw1(bsl::Switch::Id::ex1, bsl::bindOnly);
+  bsl::Led led2(bsl::Led::Id::ex2, bsl::bindOnly);
+  bsl::Switch sw2(bsl::Switch::Id::ex2, bsl::bindOnly);
+  bsl::Led led3(bsl::Led::Id::ex3, bsl::bindOnly);
+  bsl::Switch sw3(bsl::Switch::Id::ex3, bsl::bindOnly);
+  bsl::Led led4(bsl::Led::Id::ex4, bsl::bindOnly);
+  bsl::Switch sw4(bsl::Switch::Id::ex4, bsl::bindOnly);
+  bsl::Led led5(bsl::Led::Id::ex5, bsl::bindOnly);
+  bsl::Switch sw5(bsl::Switch::Id::ex5, bsl::bindOnly);
+  bsl::Led led6(bsl::Led::Id::ex6, bsl::bindOnly);
+  bsl::Switch sw6(bsl::Switch::Id::ex6, bsl::bindOnly);
+  bsl::Led led7(bsl::Led::Id::ex7, bsl::bindOnly);
+  bsl::Switch sw7(bsl::Switch::Id::ex7, bsl::bindOnly);
+  bsl::Led led8(bsl::Led::Id::ex8, bsl::bindOnly);
+  bsl::Switch sw8(bsl::Switch::Id::ex8, bsl::bindOnly);
   while (1) {
     BENCHMARK_LOOP_START();
     if (sw0.pressed())

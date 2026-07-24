@@ -3,10 +3,6 @@
   "cmake.configureOnOpen": true,
   "cmake.configurePreset": "arm-gcc-debug",
   "cmake.buildPreset": "arm-gcc-debug",
-  "cmake.cmakePath": "cube-cmake",
-  "cmake.configureArgs": [
-    "-DCMAKE_COMMAND=cube-cmake"
-  ],
   "cmake.preferredGenerators": [
     "Ninja"
   ]

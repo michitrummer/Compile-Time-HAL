@@ -72,7 +72,7 @@ function(cthal_add_example target_name)
 
   set(target_sources
     ${CTH_EXAMPLE_FILE}
-    ${CTH_IMPL_DIR}/Startup/startup_stm32l433rctxp.s
+    ${CTH_IMPL_DIR}/Src/startup_stm32l433xx.S
     ${CTH_EXTRA_SOURCES}
   )
 
@@ -131,7 +131,6 @@ endfunction()
 set(CTHAL_EXAMPLE_VARIANTS
   Single
   MultiCall
-  MultiExCall
 )
 
 foreach(variant IN LISTS CTHAL_EXAMPLE_VARIANTS)
@@ -150,8 +149,15 @@ foreach(variant IN LISTS CTHAL_EXAMPLE_VARIANTS)
   cthal_add_example(cppcthal_${variant_lc}
     IMPL_DIR ${CMAKE_SOURCE_DIR}/CPPCTHAL
     EXAMPLE_FILE ${CMAKE_SOURCE_DIR}/Examples/${variant}/cppcthal.cpp
-    LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/CPPCTHAL/STM32L433RCTXP_FLASH.ld
+    LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/CPPCTHAL/stm32l433xc_flash.ld
     CXX_STANDARD 17
+  )
+
+    cthal_add_example(cppcthal23_${variant_lc}
+    IMPL_DIR ${CMAKE_SOURCE_DIR}/CPPCTHAL23
+    EXAMPLE_FILE ${CMAKE_SOURCE_DIR}/Examples/${variant}/cppcthal23.cpp
+    LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/CPPCTHAL23/STM32L433RCTXP_FLASH.ld
+    CXX_STANDARD 23
   )
 
   cthal_add_example(cpphal_${variant_lc}
@@ -163,13 +169,6 @@ foreach(variant IN LISTS CTHAL_EXAMPLE_VARIANTS)
       ${CMAKE_SOURCE_DIR}/CPPHAL/csl/src/Pin.cpp
       ${CMAKE_SOURCE_DIR}/CPPHAL/csl/src/Port.cpp
       ${CMAKE_SOURCE_DIR}/CPPHAL/csl/src/RCC.cpp
-  )
-
-  cthal_add_example(cthal23_${variant_lc}
-    IMPL_DIR ${CMAKE_SOURCE_DIR}/CT-HAL23
-    EXAMPLE_FILE ${CMAKE_SOURCE_DIR}/Examples/${variant}/cthal23.cpp
-    LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/CT-HAL23/STM32L433RCTXP_FLASH.ld
-    CXX_STANDARD 23
   )
 
   cthal_add_example(cubemxhal_${variant_lc}
