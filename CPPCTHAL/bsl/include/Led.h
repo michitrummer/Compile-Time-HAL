@@ -89,9 +89,9 @@ class Led {
  public:
   Led() = default;
   /** @brief Drives the LED output low. */
-  constexpr void off() { pin.clear(); }
+  void off() { pin.clear(); }
   /** @brief Drives the LED output high. */
-  constexpr void on() { pin.set(); }
+  void on() { pin.set(); }
 
  private:
   typedef LedTraits<id> Traits;
