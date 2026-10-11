@@ -18,7 +18,7 @@ CPPCTHAL [1] implements the approach for the STM32L433 using C++11 language feat
 
 ## Selecting LEDs and buttons through template parameters
 
-In this example, `LD4` and B1 are the logical device identifiers for the LED on PB13 and the button on PC13. Traits map these identifiers to the concrete `Pin` type and its configuration: PB13 as an output, PC13 as an input. For a different board, this central mapping is adjusted; the application logic can retain its device names.
+In this example, `LD4` and `B1` are the logical device identifiers for the LED on `PB13` and the button on `PC13`. Traits map these identifiers to the concrete `Pin` type and its configuration: `PB13` as an output, `PC13` as an input. For a different board, this central mapping is adjusted; the application logic can retain its device names.
 
 Listing 1 shows the application logic in `main`. `bsl` denotes the board layer. `Led<bsl::LedId::ld4>` and `Switch<bsl::SwitchId::b1>` instantiate device types for the fixed device selection. The selection is encoded in the type and resolved at compile time. As a result, calls to `on()`, `off()`, and `pressed()` do not need branching logic to select a device.
 
@@ -83,7 +83,7 @@ Initialization then uses the precomputed masks and values and writes them to the
 
 ## Preparing multiple pins together
 
-Listing 3 adds `EX1`, an additional example output on PB0, to the LED `LD4` on PB13. The corresponding `LedTraits` define `EX1` as a push-pull output. Both pins belong to port B and can be configured together.
+Listing 3 adds `EX1`, an additional example output on `PB0`, to the LED `LD4` on `PB13`. The corresponding `LedTraits` define `EX1` as a push-pull output. Both pins belong to port B and can be configured together.
 
 ```cpp
 #include <bsl/include/Led.h>
@@ -104,9 +104,9 @@ void configurePortB() {
 
 Listing 3: Configuring two pins together for port B. Source: simplified from [1], `CPPCTHAL/bsl/include/BoardConfig.h` and `Led.h`.
 
-`PortConfiguration` takes the port and the traits types as template arguments. The variadic template accepts multiple pin descriptions. CPPCTHAL combines their masks and values recursively at compile time. `configurePortB()` first enables the shared GPIOB clock, then writes the precomputed configuration to the registers through `PortB::apply()`.
+`PortConfiguration` takes the port and the traits types as template arguments. The variadic template accepts multiple pin descriptions. CPPCTHAL combines their masks and values recursively at compile time. `configurePortB()` first enables the shared `GPIOB` clock, then writes the precomputed configuration to the registers through `PortB::apply()`.
 
-During compilation, CPPCTHAL checks the port assignment and rejects duplicate configurations of the same pin. Separate port configurations are still required for the LED on PB13 and the button on PC13; `BoardConfig::apply()` in Listing 1 handles them.
+During compilation, CPPCTHAL checks the port assignment and rejects duplicate configurations of the same pin. Separate port configurations are still required for the LED on `PB13` and the button on `PC13`; `BoardConfig::apply()` in Listing 1 handles them.
 
 ## Why the access layers can disappear
 
@@ -118,7 +118,7 @@ This depends on optimization settings and code visibility. Conventional C interf
 
 The MultiCall scenario performs multiple LED and button accesses using different HAL variants [3]. Table 1 compares flash usage and the number of instructions in the main loop. Flash `main` refers to the code size of the `main` function; total flash covers the complete program.
 
-| Variant | Flash main [bytes] | Total flash [bytes] | Instructions in main loop |
+| Variant | Flash `main` [bytes] | Total flash [bytes] | Instructions in main loop |
 | --- | ---: | ---: | ---: |
 | Macros / NoHAL | 1284 | 2148 | 46 |
 | CHAL | 780 | 1644 | 63 |
