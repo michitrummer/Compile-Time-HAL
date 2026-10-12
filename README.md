@@ -97,6 +97,11 @@ bash MemoryAnalysis.sh
 
 Results depend on the toolchain, optimization settings, and scenario. An instruction count is not a runtime measurement. The manuscript provides context for its comparison results and the revision used.
 
+## Contact
+
+- Personal and business inquiries: [Michael Trummer on LinkedIn](https://www.linkedin.com/in/michael-trummer).
+- Technical questions and bug reports: [GitHub Issues](https://github.com/michitrummer/Compile-Time-HAL/issues). Issues are publicly visible.
+
 ## License
 
 Project files marked with `SPDX-License-Identifier: Apache-2.0` are licensed under the [Apache License 2.0](LICENSE). Bundled or generated STMicroelectronics files are subject to their respective license notices. See [LICENSE_SCOPE.md](LICENSE_SCOPE.md) and [NOTICE](NOTICE) for details.
