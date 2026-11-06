@@ -89,13 +89,12 @@ class Led {
  public:
   Led() = default;
   /** @brief Drives the LED output low. */
-  void off() { pin.clear(); }
+  void off() { Pin::clear(); }
   /** @brief Drives the LED output high. */
-  void on() { pin.set(); }
+  void on() { Pin::set(); }
 
  private:
-  typedef LedTraits<id> Traits;
-  typename Traits::Pin pin;
+  using Pin = typename LedTraits<id>::Pin;
 };
 
 }  // namespace bsl
