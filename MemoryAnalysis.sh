@@ -125,17 +125,65 @@ readonly LL_INC=(
   -I"$ROOT/CubeMXLL/Drivers/STM32L4xx_HAL_Driver/Inc"
 )
 
+# Capture provenance before compiling. A dirty checkout must never be presented
+# as an exact measurement of HEAD. Ignore only this script's generated output.
+python3 - "$ROOT" "$OUT" "$CC" "$CXX_COMPILER" "$LD" \
+  "${#COMMON[@]}" "${COMMON[@]}" "${CXX_FLAGS[@]}" <<'PY'
+import datetime
+import json
+import pathlib
+import shutil
+import subprocess
+import sys
+
+root, out, cc, cxx, ld = sys.argv[1:6]
+common_count = int(sys.argv[6])
+flags = sys.argv[7:]
+
+def run(*args):
+    return subprocess.check_output(args, text=True).strip()
+
+status = run("git", "-C", root, "status", "--porcelain=v1",
+             "--untracked-files=all", "--", ".", ":(exclude)MemoryAnalysis")
+metadata = {
+    "schema_version": 1,
+    "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    "commit": run("git", "-C", root, "rev-parse", "HEAD"),
+    "working_tree_dirty": bool(status),
+    "working_tree_status": status,
+    "target": "STM32L433 / Cortex-M4 / Thumb",
+    "isolated_common_flags": flags[:common_count],
+    "isolated_cxx_flags": flags[common_count:],
+}
+for name, command in (("compiler", cc), ("cxx_compiler", cxx), ("linker", ld)):
+    version = run(command, "--version")
+    metadata[name] = version.splitlines()[0]
+    metadata[name + "_path"] = shutil.which(command)
+    pathlib.Path(out, name + ".txt").write_text(version + "\n")
+pathlib.Path(out, "build-metadata.json").write_text(
+    json.dumps(metadata, indent=2) + "\n")
+if status:
+    print("Note: local changes detected; results will be marked dirty.")
+PY
+
+# Preserve the exact arguments, including per-implementation options.
+run_logged() {
+  printf '%q ' "$@" >>"$OUT/build-commands.log"
+  printf '\n' >>"$OUT/build-commands.log"
+  "$@"
+}
+
 compile_c() {
   local output="$1"
   shift
-  "$CC" "${COMMON[@]}" "$@" -o "$output"
+  run_logged "$CC" "${COMMON[@]}" "$@" -o "$output"
 }
 
 compile_cpp() {
   local output="$1"
   local standard="$2"
   shift 2
-  "$CXX_COMPILER" \
+  run_logged "$CXX_COMPILER" \
     "${COMMON[@]}" \
     "${CXX_FLAGS[@]}" \
     "-std=$standard" \
@@ -146,7 +194,7 @@ compile_cpp() {
 link_isolated_elf() {
   local output="$1"
   shift
-  "$LD" \
+  run_logged "$LD" \
     -T "$OUT/minimal.ld" \
     -e main \
     --gc-sections \
@@ -256,13 +304,15 @@ for example in Single MultiCall; do
   done
 done
 
-"$CC" --version >"$OUT/compiler.txt"
-
 echo "Building 14 complete STM32 firmware ELFs ..."
-cmake \
+run_logged cmake \
   -S "$ROOT" \
   -B "$FULL_BUILD" \
   -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+  "-DARM_GCC_PREFIX=$ARM_GCC_PREFIX" \
+  "-DCMAKE_C_COMPILER=$(command -v "$CC")" \
+  "-DCMAKE_CXX_COMPILER=$(command -v "$CXX_COMPILER")" \
   -DCMAKE_TOOLCHAIN_FILE="$ROOT/cmake/toolchains/arm-none-eabi-gcc.cmake"
 
 full_targets=()
@@ -272,10 +322,11 @@ for example_key in single multicall; do
     full_targets+=("${implementation}_${example_key}")
   done
 done
-cmake \
+run_logged cmake \
   --build "$FULL_BUILD" \
   --parallel \
-  --target "${full_targets[@]}"
+  --verbose \
+  --target "${full_targets[@]}" 2>&1 | tee "$OUT/full-build.log"
 
 echo "Extracting instruction, memory and section values ..."
 python3 "$ROOT/MemoryAnalysisResults.py" \

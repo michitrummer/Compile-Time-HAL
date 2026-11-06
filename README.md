@@ -95,7 +95,11 @@ bash MemoryAnalysis.sh
 
 [MemoryAnalysis.sh](MemoryAnalysis.sh) builds isolated benchmark ELFs and complete firmware ELFs. [MemoryAnalysisResults.py](MemoryAnalysisResults.py) evaluates memory usage and instruction counts; results are written to `MemoryAnalysis/`.
 
-Results depend on the toolchain, optimization settings, and scenario. An instruction count is not a runtime measurement. The manuscript provides context for its comparison results and the revision used.
+Each run captures the source commit, local-change status, C and C++ compiler versions, and flags before compilation. Exact isolated-build commands are recorded in `MemoryAnalysis/build-commands.log`; the complete firmware build exports `full-build/compile_commands.json` and `full-build.log`. Keep these files with the results when publishing a comparison.
+
+See [Memory analysis and reproducibility](docs/MemoryAnalysis.md) for the workflow based on source revision `45a7165`, output definitions, and presentation attribution. The script always records the actual checked-out commit rather than assigning that revision to later runs.
+
+Results depend on the toolchain, optimization settings, and scenario. An instruction count is not a runtime measurement. The manuscript's historical comparison is not a newly measured result for `45a7165`.
 
 ## Contact
 

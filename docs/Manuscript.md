@@ -129,6 +129,8 @@ The MultiCall scenario performs multiple LED and button accesses using different
 
 Table 1: MultiCall comparison from [3], slide 27. Macro and NoHAL denote the direct-access variant in the two charts.
 
+These are historical presentation results, not a new measurement of revision `45a7165`. The archived table does not identify an exact compiler version or measurement commit. For new comparisons, run `MemoryAnalysis.sh` and retain the generated provenance and build logs as described in [Memory analysis and reproducibility](MemoryAnalysis.md). Do not relabel this table with the commit of a later source review.
+
 In this comparison, CPPCTHAL requires 460 bytes for `main` and 1324 bytes in total. Total flash usage is approximately 20% lower than CPPHAL and approximately 50% lower than CubeMX HAL. With 46 instructions, CPPCTHAL achieves the same instruction count in the loop as direct access; CPPHAL requires 63 instructions.
 
 Fewer instructions may also reduce execution time. Their number alone, however, does not determine an exact duration: instruction types, memory accesses, and controller characteristics also contribute. The table does not provide a timing measurement. The results apply to this build and scenario; compiler and optimization settings need to be considered when making comparisons on other hardware.
@@ -153,7 +155,7 @@ A complete C++ HAL from a chip manufacturer could extend the approach beyond GPI
 
 ## References and further source code
 
-[1] Michael Trummer: Compile-Time-HAL. CPPCTHAL and CPPCTHAL23. [https://github.com/michitrummer/Compile-Time-HAL](https://github.com/michitrummer/Compile-Time-HAL) — revision used: commit d72ac3d; accessed October 8, 2026.
+[1] Michael Trummer: Compile-Time-HAL. CPPCTHAL and CPPCTHAL23. [Source revision 45a7165](https://github.com/michitrummer/Compile-Time-HAL/tree/45a716557e6bdf413f713fc8f8abced7185a4a81); reviewed November 6, 2026. This source reference does not identify the measurement revision of Table 1.
 
 [2] C++ working draft: Fold expressions, `constexpr`, and `consteval`. [https://eel.is/c++draft/expr.prim.fold](https://eel.is/c++draft/expr.prim.fold) and [https://eel.is/c++draft/dcl.constexpr](https://eel.is/c++draft/dcl.constexpr)
 
