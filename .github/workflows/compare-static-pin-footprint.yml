@@ -1,0 +1,25 @@
+name: Compare static Pin footprint
+on:
+  push:
+    branches: [analysis/pin-static-footprint-20261106]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install ARM GCC
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib ninja-build
+      - name: Execute instruction and flash comparison
+        run: bash ./compare_cthal_instructions.sh "$GITHUB_WORKSPACE" | tee comparison.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-pin-comparison
+          path: comparison.csv
