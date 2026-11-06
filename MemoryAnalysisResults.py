@@ -402,20 +402,27 @@ for example_name, example_key in EXAMPLES:
                 )
         rows.append(row)
 
-compiler = run(CC, "--version").splitlines()[0]
-commit = run(
-    "git",
-    "-C",
-    str(ROOT),
-    "rev-parse",
-    "HEAD",
-).strip()
+provenance = json.loads((OUT / "build-metadata.json").read_text())
+compiler = provenance["compiler"]
+commit = provenance["commit"]
 metadata = [
     ("repository", "michitrummer/Compile-Time-HAL", ""),
     ("commit", commit, ""),
     ("compiler", compiler, ""),
+    ("cxx_compiler", provenance["cxx_compiler"], ""),
+    ("compiler_path", provenance["compiler_path"], ""),
+    ("cxx_compiler_path", provenance["cxx_compiler_path"], ""),
+    ("linker", provenance["linker"], ""),
+    ("started_utc", provenance["started_utc"], ""),
+    ("working_tree_dirty", provenance["working_tree_dirty"], ""),
+    ("working_tree_status", provenance["working_tree_status"], ""),
+    ("isolated_common_flags", " ".join(provenance["isolated_common_flags"]), ""),
+    ("isolated_cxx_flags", " ".join(provenance["isolated_cxx_flags"]), ""),
     ("target", "STM32L433 / Cortex-M4 / Thumb", ""),
-    ("isolated_optimization", "-O3 -fno-unroll-loops", ""),
+    ("isolated_optimization", " ".join(
+        flag for flag in provenance["isolated_common_flags"]
+        if flag.startswith("-O") or flag == "-fno-unroll-loops"
+    ), ""),
     (
         "full_build",
         "CMake Release; benchmark targets use -O3",
