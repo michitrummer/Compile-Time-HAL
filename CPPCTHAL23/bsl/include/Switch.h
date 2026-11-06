@@ -90,11 +90,10 @@ class Switch {
  public:
   Switch() = default;
   /** @brief Reads the switch GPIO input. */
-  bool pressed() const { return pin.get(); }
+  bool pressed() const { return Pin::get(); }
 
  private:
-  using Traits = SwitchTraits<Id>;
-  [[no_unique_address]] typename Traits::Pin pin{};
+  using Pin = typename SwitchTraits<Id>::Pin;
 };
 
 }  // namespace bsl
